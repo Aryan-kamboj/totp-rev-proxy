@@ -1,6 +1,6 @@
 # Two-Factor Authentication System
 
-This project implements is a simple plug and play two-factor authentication (2FA) system using [Caddy](https://caddyserver.com/) reverse proxy and [FastAPI](https://fastapi.tiangolo.com/) authentication service using TOTP (Time-based One-Time Password).
+This project implements a simple plug and play two-factor authentication (2FA) system over any web hosted application using [Caddy](https://caddyserver.com/) as reverse proxy and [FastAPI](https://fastapi.tiangolo.com/) as authentication service using TOTP (Time-based One-Time Password).
 
 ## Features
 

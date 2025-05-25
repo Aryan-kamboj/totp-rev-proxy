@@ -1,0 +1,18 @@
+:80 {
+	handle /otp* {
+		reverse_proxy auth_app:8001
+	}
+# this is so that we ignore the login page for reseting the secret 
+	handle /reset-totp-secret {
+		reverse_proxy auth_app:8001
+	}
+  handle {
+    forward_auth auth_app:8001 {
+      uri /verify
+      copy_headers * {
+        *
+      }
+    }
+    reverse_proxy main_app:8000
+  }
+}

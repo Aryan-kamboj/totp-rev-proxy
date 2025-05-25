@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: main_app/Dockerfile
+    container_name: main_app
+    # ports:
+    #   - "8000:8000"
+    networks:
+      - net1
+    # command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+
+  auth_service:
+    build:
+      context: .
+      dockerfile: auth_app/Dockerfile
+    volumes:
+      - ./auth_data:/app/data
+    env_file: ".env"
+    container_name: auth_app 
+    # ports:
+    #   - "8001:8001"
+    networks:
+      - net1
+
+  caddy:
+    container_name: caddy
+    image: caddy:2.10.0-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    depends_on:
+      - fastapi 
+      - auth_service 
+    networks:
+      - net1
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  net1:

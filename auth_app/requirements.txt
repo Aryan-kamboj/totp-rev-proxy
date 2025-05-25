@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+jinja2
+pyotp
+dotenv
+cryptography
+qrcode[pil]
+pyjwt

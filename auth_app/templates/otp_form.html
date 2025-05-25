@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Enter OTP</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin-top: 100px;
+            text-align: center;
+        }
+        input[type="text"] {
+            font-size: 24px;
+            letter-spacing: 12px;
+            text-align: center;
+            width: 180px;
+            padding: 10px;
+        }
+        input[type="submit"] {
+            margin-top: 20px;
+            font-size: 18px;
+            padding: 10px 20px;
+        }
+        .message {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Enter 6-digit OTP</h1>
+    <input type="text" id="otp" maxlength="6" required>
+<button onclick="submitOtp()">Submit</button>
+
+<script>
+const API_BASE_URL = "{{ domain }}";
+async function submitOtp() {
+    const otpInput = document.getElementById("otp");
+    const otp = otpInput.value;
+    const messageDiv = document.createElement("div");
+    messageDiv.className = "message";
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/otp`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ otp: otp })
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            messageDiv.textContent = error.detail || "An error occurred. Please try again.";
+            messageDiv.style.color = "red";
+            document.body.insertBefore(messageDiv, otpInput.nextSibling);
+            return;
+        }
+
+        if (response.redirected) {
+            window.location.href = response.url;
+        } else {
+            const data = await response.json();
+            if (data.message) {
+                messageDiv.textContent = data.message;
+                messageDiv.style.color = "green";
+                document.body.insertBefore(messageDiv, otpInput.nextSibling);
+            }
+        }
+    } catch (error) {
+        messageDiv.textContent = "An unexpected error occurred. Please try again.";
+        messageDiv.style.color = "red";
+        document.body.insertBefore(messageDiv, otpInput.nextSibling);
+    }
+}
+</script>
+
+    {% if message %}
+        <div class="message">{{ message }}</div>
+    {% endif %}
+</body>
+</html>
+
